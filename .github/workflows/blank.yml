@@ -12,7 +12,7 @@ jobs:
     steps:
       # リポジトリAをチェックアウト
       - name: Checkout Repository A
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: buriki-test-org/github_actions_test
           token: ${{ secrets.A_REPO_PAT }}
