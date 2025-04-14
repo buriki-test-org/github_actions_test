@@ -1,0 +1,35 @@
+name: Sync Repository
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      # リポジトリAをチェックアウト
+      - name: Checkout Repository A
+        uses: actions/checkout@v3
+        with:
+          repository: buriki-test-org/github_actions_test
+          token: ${{ secrets.A_REPO_PAT }}
+          ref: main
+
+      # リポジトリBをクローン
+      - name: Clone Repository B
+        run: |
+          git clone https://x-access-token:${{ secrets.A_REPO_PAT }}@github.com/buriki-test-org/github_actions_sync_test.git repo-b
+
+      # リポジトリBに変更をコピー
+      - name: Sync Changes to Repository B
+        run: |
+          rsync -av --exclude='.git' ./ repo-b/
+          cd repo-b
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "Sync changes from Repository A" || echo "No changes to commit"
+          git push origin main
